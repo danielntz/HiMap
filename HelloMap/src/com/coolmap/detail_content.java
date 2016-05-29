@@ -43,15 +43,13 @@ public class detail_content  extends Activity implements OnClickListener{
 	        }
 
 			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				   switch (v.getId()) {
-				case R.id.buju:
-					      finish();
-				        	break;
-
-				default:
-					break;
+			public void onClick(View arg0) {
+				int id = arg0.getId();
+				if (id == R.id.buju) {
+					finish();
+				} else {
 				}
 			}
+
+			
 }

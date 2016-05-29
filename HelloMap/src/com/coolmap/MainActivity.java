@@ -1,18 +1,11 @@
 package com.coolmap;
 
-import java.io.Serializable;
 import java.util.List;
-
-import com.coolmap.MyOrientation.OrientainChanged;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
-import android.graphics.Point;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,13 +13,32 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity<MapView, BaiduMap> extends Activity implements android.view.View.OnClickListener{
+import com.baidu.location.BDLocation;
+import com.baidu.location.BDLocationListener;
+import com.baidu.location.LocationClient;
+import com.baidu.location.LocationClientOption;
+import com.baidu.mapapi.SDKInitializer;
+import com.baidu.mapapi.map.BaiduMap;
+import com.baidu.mapapi.map.BaiduMap.OnMarkerClickListener;
+import com.baidu.mapapi.map.BitmapDescriptor;
+import com.baidu.mapapi.map.BitmapDescriptorFactory;
+import com.baidu.mapapi.map.MapStatusUpdate;
+import com.baidu.mapapi.map.MapStatusUpdateFactory;
+import com.baidu.mapapi.map.MapView;
+import com.baidu.mapapi.map.Marker;
+import com.baidu.mapapi.map.MarkerOptions;
+import com.baidu.mapapi.map.MyLocationConfiguration;
+import com.baidu.mapapi.map.MyLocationData;
+import com.baidu.mapapi.map.OverlayOptions;
+import com.baidu.mapapi.model.LatLng;
+import com.coolmap.MyOrientation.OrientainChanged;
+
+public class MainActivity extends Activity implements android.view.View.OnClickListener{
    
 	       private static final String TAG = null;
 		private MapView  mapview;
@@ -66,6 +78,7 @@ public class MainActivity<MapView, BaiduMap> extends Activity implements android
 		  mapview = (MapView)findViewById(R.id.bmapView);
 		  this.context = this;
 		  MapStatusUpdate   chengdu = MapStatusUpdateFactory.zoomTo(15.0f);
+		
 		  mapdu = mapview.getMap();
 		  mapdu.setMapStatus(chengdu);
 	  	 tanchu.setOnClickListener(this);
@@ -152,7 +165,7 @@ public class MainActivity<MapView, BaiduMap> extends Activity implements android
 	    protected void onPause() {
 	    // TODO Auto-generated method stub
 	    super.onPause();
-	    mapview.onPause();
+	     mapview.onPause();
 	    }  
 		@Override
 		protected void onStart() {
@@ -209,10 +222,9 @@ public class MainActivity<MapView, BaiduMap> extends Activity implements android
 	}
 	@Override
 	public void onClick(View v) {
-		// TODO Auto-generated method stub
-		   switch (v.getId()) {
-	    	case R.id.tanchu :
-			  if(flag == 1){
+		int id = v.getId();
+		if (id == R.id.tanchu) {
+			if(flag == 1){
 			    	    View aaa = getLayoutInflater().inflate(R.layout.style_map, null);
 			    	    window = new PopupWindow(aaa,100,150);
 			    	     window.showAtLocation(aaa, Gravity.BOTTOM|Gravity.CENTER, -100,-25);
@@ -233,39 +245,26 @@ public class MainActivity<MapView, BaiduMap> extends Activity implements android
 				            	 flag = 1;
 				            }
 			  }
-			    	    
-			
-			
-			 
-			
-			     break;
-	    	case R.id.common_map:
-			       mapdu.setMapType(BaiduMap.MAP_TYPE_NORMAL);
-			       break;
-		case R.id.star_map:
-			       mapdu.setMapType(BaiduMap.MAP_TYPE_SATELLITE);
-		        	break;
-			      
-		case R.id.traffic_map:
-			     if( mapdu.isTrafficEnabled()){
-			    	   mapdu.setTrafficEnabled(false);
-			     }
-			     else{
-			    	  mapdu.setTrafficEnabled(true);
-			     }
-			      break;
-		case R.id.mylocate:
-			  LatLng lat = new LatLng(latititude, lontitude);//获得经度和纬度
-       	     MapStatusUpdate    map = MapStatusUpdateFactory.newLatLng(lat);
-       	      mapdu.animateMapStatus(map);    //地图当前位置已动画的形式展现      
-			break;
-		   //添加覆盖物 功能
-		 case R.id.add:
-			     info ii = new info();
-			     ii.jianli();
-			       AddOverly(ii.hhh);
-;			      break;
-			}
+		} else if (id == R.id.common_map) {
+			mapdu.setMapType(BaiduMap.MAP_TYPE_NORMAL);
+		} else if (id == R.id.star_map) {
+			mapdu.setMapType(BaiduMap.MAP_TYPE_SATELLITE);
+		} else if (id == R.id.traffic_map) {
+			if( mapdu.isTrafficEnabled()){
+				   mapdu.setTrafficEnabled(false);
+			 }
+			 else{
+				  mapdu.setTrafficEnabled(true);
+			 }
+		} else if (id == R.id.mylocate) {
+			LatLng lat = new LatLng(latititude, lontitude);//获得经度和纬度
+			MapStatusUpdate    map = MapStatusUpdateFactory.newLatLng(lat);
+			mapdu.animateMapStatus(map);    //地图当前位置已动画的形式展现      
+		} else if (id == R.id.add) {
+			info ii = new info();
+			ii.jianli();
+			AddOverly(ii.hhh);
+		}
 	}
 	/**
 	 * 添加覆盖物
